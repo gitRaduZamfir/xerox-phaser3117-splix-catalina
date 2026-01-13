@@ -1,0 +1,32 @@
+~/Desktop/Splix-2.0.0.mpkg
+│
+├─ Contents/
+│   ├─ Packages/
+│   │   └─ target.pkg/
+│   │       ├─ Contents/
+│   │       │   ├─ usr/
+│   │       │   │   ├─ libexec/
+│   │       │   │   │   └─ cups/
+│   │       │   │   │       └─ filter/
+│   │       │   │   │           ├─ pstoqpdl         <-- Splix filter
+│   │       │   │   │           └─ rastertoqpdl     <-- Splix filter
+│   │       │   │   └─ share/
+│   │       │   │       └─ cups/
+│   │       │   │           └─ model/
+│   │       │   │               └─ xerox/
+│   │       │   │                   └─ ph3117.ppd   <-- PPD for Phaser 3117
+│   │       │   └─ ... other pkg contents
+│   └─ ... other mpkg contents
+└─ ... 
+
+System installation paths after setup:
+
+/Library/Printers/Samsung/UPD/Filters/
+│
+├─ pstoqpdl         <-- Copied from Splix
+└─ rastertoqpdl     <-- Copied from Splix, must be executable and readable
+
+/Library/Printers/PPDs/Contents/Resources/
+│
+└─ Xerox Phaser 3117.gz   <-- Copied and edited PPD (gzip)
+
