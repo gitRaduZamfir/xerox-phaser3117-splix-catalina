@@ -1,170 +1,35 @@
-Installing Xerox Phaser 3117 on macOS Catalina using Splix 2.0.0 (USB)
+# Xerox Phaser 3117 - macOS Catalina Driver Fix
 
-This guide explains how to connect and print with a Xerox Phaser 3117 on macOS 10.15 Catalina using the Splix 2.0.0 driver, bypassing automatic driver installation issues.
-It includes all files required and step-by-step instructions.
-Required Files
-1. Splix 2.0.0 package (contains the PPD and filters)
-   * `Splix-2.0.0.mpkg`
-   * Path used in tutorial: `~/Desktop/Splix-2.0.0.mpkg`
-2. PPD file for Xerox Phaser 3117
-   * Found inside the Splix package:
+This repository provides a working solution for installing the **Xerox Phaser 3117** on **macOS Catalina (10.15)**. Since this printer is officially unsupported on modern macOS, these guides use the Splix driver and CUPS configuration to restore functionality.
 
-```
-/Users/<your_user>/Desktop/Splix-2.0.0.mpkg/Contents/Packages/target.pkg/Contents/usr/share/cups/model/xerox/ph3117.ppd
+---
 
-```
+## 🚀 Choose Your Installation Method
 
-   * Destination after setup:
+Depending on your comfort level with the Terminal, choose one of the two methods below:
 
-```
-/Library/Printers/PPDs/Contents/Resources/Xerox Phaser 3117.gz
+### 1. Script-Based Installation (Recommended)
+This is the **fastest and easiest** method. It uses a script to automate the file permissions, driver paths, and printer registration.
 
-```
+👉 **[Follow SCRIPT-INSTALL.md instructions](./SCRIPT-INSTALL.md)**
 
-3. CUPS filters from Splix
-   * Files:
+---
 
-```
-pstoqpdl
-rastertoqpdl
+### 2. Manual Installation
+Choose this method if you prefer to perform each step yourself or if you want to understand exactly how the driver is being configured on your system.
 
-```
+👉 **[Follow INSTALL.md instructions](./INSTALL.md)**
 
-   * Source in Splix:
+---
 
-```
-/Users/<your_user>/Desktop/Splix-2.0.0.mpkg/Contents/Packages/target.pkg/Contents/usr/libexec/cups/filter/
+## 🛠 Prerequisites
+Regardless of the method you choose, ensure you have:
+* A **USB connection** to the printer.
+* The **Splix 2.0.0** package downloaded.
+* **Administrator access** to your Mac.
 
-```
+---
 
-   * Destination:
-
-```
-/Library/Printers/Samsung/UPD/Filters/
-
-```
-
-Step 1: Copy Filters
-Open Terminal and copy the filters to the system location:
-
-```
-sudo cp ~/Desktop/Splix-2.0.0.mpkg/Contents/Packages/target.pkg/Contents/usr/libexec/cups/filter/pstoqpdl /Library/Printers/Samsung/UPD/Filters/
-sudo cp ~/Desktop/Splix-2.0.0.mpkg/Contents/Packages/target.pkg/Contents/usr/libexec/cups/filter/rastertoqpdl /Library/Printers/Samsung/UPD/Filters/
-
-```
-
-Make sure the filters are executable and readable:
-
-```
-sudo chmod o+rx /Library/Printers/Samsung/UPD/Filters/pstoqpdl
-sudo chmod o+rx /Library/Printers/Samsung/UPD/Filters/rastertoqpdl
-
-```
-
-Check:
-
-```
-ls -l /Library/Printers/Samsung/UPD/Filters/
-
-```
-
-Step 2: Install the PPD
-1. Copy the PPD to the system folder:
-
-```
-sudo cp ~/Desktop/Splix-2.0.0.mpkg/Contents/Packages/target.pkg/Contents/usr/share/cups/model/xerox/ph3117.ppd /Library/Printers/PPDs/Contents/Resources/Xerox\ Phaser\ 3117
-
-```
-
-1. Make it executable:
-
-```
-sudo chmod +x /Library/Printers/PPDs/Contents/Resources/Xerox\ Phaser\ 3117
-
-```
-
-1. Edit the PPD to point to the absolute filter path:
-
-```
-sudo nano /Library/Printers/PPDs/Contents/Resources/Xerox\ Phaser\ 3117
-
-```
-
-Find the line:
-
-```
-*cupsFilter: "application/vnd.cups-raster 0 rastertoqpdl"
-
-```
-
-Change it to:
-
-```
-*cupsFilter: "application/vnd.cups-raster 0 /Library/Printers/Samsung/UPD/Filters/rastertoqpdl"
-
-```
-
-Save (`CTRL+X`, `Y`, `Enter`).
-1. Compress and set permissions:
-
-```
-sudo gzip -f /Library/Printers/PPDs/Contents/Resources/Xerox\ Phaser\ 3117
-sudo chmod o+r /Library/Printers/PPDs/Contents/Resources/Xerox\ Phaser\ 3117.gz
-
-```
-
-Step 3: Add the Printer in CUPS (USB Direct)
-Since macOS Catalina hides the “Advanced / USB” tab in System Preferences, we must add the printer manually via Terminal:
-1. Detect the USB URI:
-
-```
-lpinfo -v | grep Phaser
-
-```
-
-You will get something like:
-
-```
-usb://Xerox/Phaser%203117?serial=L93540594
-
-```
-
-1. Add the printer:
-
-```
-sudo lpadmin -p "Xerox_Phaser_3117" -E -v "usb://Xerox/Phaser%203117?serial=L93540594" -P "/Library/Printers/PPDs/Contents/Resources/Xerox Phaser 3117.gz"
-
-```
-
-1. Set as default (optional):
-
-```
-sudo lpadmin -d "Xerox_Phaser_3117"
-
-```
-
-1. Restart CUPS:
-
-```
-sudo killall cupsd
-sleep 2
-sudo launchctl start org.cups.cupsd
-
-```
-
-Step 4: Test Printing
-
-```
-echo "TEST PHASER 3117" | lp
-lpstat -p
-
-```
-
-You should see:
-
-```
-printer Xerox_Phaser_3117 is idle.  enabled since ...
-
-```
-
-Job should start printing immediately.
+## Author
+Documentation and script fixes by **Radu Zamfir**.  
+*Tested on macOS Catalina, 2026.*
